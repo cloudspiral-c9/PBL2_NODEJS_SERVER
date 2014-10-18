@@ -1,10 +1,9 @@
 PBL2_NODEJS_SERVER
 ==================
 
-DataBase用，Node.jsサーバのリポジトリ
+DataBase用 Node.jsサーバのリポジトリ
 
-_食材とJSONのキーの対応表_
-*以下は食品1gあたりの量です．
+食材とJSONのキーの対応 (食品1gあたりの量)
 
 name: 食品名  
 energy: エネルギー  
@@ -43,5 +42,21 @@ cholesterol: コレステロール
 waterSolubleFiberContaining:	水溶性食物繊維  
 waterUnsolubleFiberContaining: 不要性食物繊維  
 totalFiberContaining: 食物繊維総量  
-solt: 食塩相当量  
+solt: 食塩相当量   
+
+API仕様
+ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com/nutritionにGETでHTTPリクエストを送る  
+
+クエリの仕様は次の通り  
+keyはnames．これがないと結果はnullが返される．  
+
+
+names=食物名 : 一つだけの結果を返せばよい場合  
+names[]=食物名1&names[]=食物名2  
+
+よって'ごはん'の栄養価を受信したい際には，  
+ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com/nutrition?names=ごはん  
+
+
+
 
