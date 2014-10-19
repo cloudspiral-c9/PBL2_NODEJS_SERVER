@@ -2,16 +2,16 @@
 //Moduleの読み込み
 var http = require('http');
 var url = require('url');
-var util = require('util');
-var querystring = require('querystring');
-var events = require('events');
 var nutrition = require('NutritionMongoHelper.js');
 
 //サーバの作成
 var server = http.createServer();
+console.log("Server Create - Success");
 
 //リクエスト受信時のハンドラ
 var requestHandler = function(request, response) {
+
+	console.log("Request Received");
 
 	//GETメソッド以外は受け付けない
 	if (request.method != 'GET') {
@@ -51,15 +51,14 @@ var requestHandler = function(request, response) {
 	response.end();
 };
 
-
 //イベントハンドラを登録
 server.on('request', requestHandler);
-
 
 //サーバを起動
 //引数は(port, [hostname], [backlog], [callback])
 var port = 8080;
 var hostname = 'ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com';
 server.listen(port, hostname);
+console.log("Server Listen Start - Success");
 
 
