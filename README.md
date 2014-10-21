@@ -12,7 +12,7 @@ ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com:8080/nutritionにGETでHT
 keyはnames．これがないと結果はnullが返される．  
 
 names=食物名 : 一つだけの結果を返せばよい場合  
-names[]=食物名1&names[]=食物名2  
+names=食物名1&names=食物名2  
 
 よって'ごはん'の栄養価を受信したい際には，  
 ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com:8080/nutrition?names=ごはん  
