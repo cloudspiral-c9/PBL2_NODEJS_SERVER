@@ -11,30 +11,30 @@ console.log("Server Create - Success");
 //リクエスト受信時のハンドラ
 var requestHandler = function(request, response) {
 
-	console.log("Request Received");
-
 	//GETメソッド以外は受け付けない
 	if (request.method != 'GET') {
 		return;
 	}
 
 	var parsedObject = url.parse(request.url, true);
+	var path = parsedObject.pathname;
 	var queries = parsedObject.query;
 
 	//ここでアクセスしてきたパスによって処理を分岐
-	var result;
-	switch (request.url) {
+	var result = null;
+	switch (path) {
 		
 		case '/nutrition':
-			if (queries['names'] != undefined) {
-				result = nutrition.getNutritionsByFoodName(foodNames);
+		    if (queries['names'] != undefined) {
+		        var foodNames = queries['names'];
+				result = nutrition.getNutritionsByFoodNames(foodNames);
 			}			
 			break;
-		
+
 		default:
 			break;	
 	}
-	
+
 	//レスポンスヘッダを記述
 	var statusCode = 200;
 	var headers = {
@@ -46,7 +46,7 @@ var requestHandler = function(request, response) {
 	//レスポンスボディを記述
 	var encode = 'UTF-8';
 	response.write('nutrition:' + result + '\n', encode);
-
+	
 	//レスポンスの終了
 	response.end();
 };
@@ -57,8 +57,8 @@ server.on('request', requestHandler);
 //サーバを起動
 //引数は(port, [hostname], [backlog], [callback])
 var port = 8080;
-var hostname = 'ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com';
-server.listen(port, hostname);
-console.log("Server Listen Start - Success");
+server.listen(port, function() {
+	console.log("Server Listen Start - Success");
+});
 
 
