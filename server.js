@@ -2,7 +2,7 @@
 //Moduleの読み込み
 var http = require('http');
 var url = require('url');
-var nutrition = require('NutritionMongoHelper.js');
+var NutritionMongoHelper = require('NutritionMongoHelper.js').NutritionMongoHelper;
 
 
 //サーバの作成
@@ -43,7 +43,7 @@ function requestHandler(request, response) {
 		    if (queries['names']) {
 		        
 		        var foodNames = queries['names'];
-				nutrition.getNutritionByFoodNames(foodNames)
+				NutritionMongoHelper.getNutritionByFoodNames(foodNames)
 
 				.done( function(result) {
 					respondResult(response, result);
