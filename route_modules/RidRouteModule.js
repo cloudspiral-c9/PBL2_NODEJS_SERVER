@@ -20,6 +20,6 @@ var RidRouteModule = {
 
 		return def.promise;
 	}
-}
+};
 
 exports = RidRouteModule;
