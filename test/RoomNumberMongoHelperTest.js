@@ -1,9 +1,9 @@
 
 
-var RoomNumberMongoHelper = require('../node_modules/RoomNumberMongoHelper.js').RoomNumberMongoHelper;
+var RoomNumberMongoHelper = require( __dirname + '/../node_modules/RoomNumberMongoHelper.js').RoomNumberMongoHelper;
 var assert = require('assert');
 var deferred = require('deferred');
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var MongoTestHelper = require(__dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var RoomNumberTest = function() {
 

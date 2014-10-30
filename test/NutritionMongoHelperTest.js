@@ -1,5 +1,5 @@
 
-var NutritionMongoHelper = require('../node_modules/NutritionMongoHelper.js').NutritionMongoHelper;
+var NutritionMongoHelper = require( __dirname + '/../node_modules/NutritionMongoHelper.js').NutritionMongoHelper;
 var assert = require('assert');
 var deferred = require('deferred');
 

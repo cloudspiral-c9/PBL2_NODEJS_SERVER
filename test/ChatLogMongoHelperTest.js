@@ -1,8 +1,8 @@
 
 var assert = require('assert');
-var ChatLogMongoHelper = require('../node_modules/ChatLogMongoHelper.js').ChatLogMongoHelper;
-var TimestampHelper = require('../node_modules/TimestampHelper.js');
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var ChatLogMongoHelper = require( __dirname + '/../node_modules/ChatLogMongoHelper.js').ChatLogMongoHelper;
+var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var now = TimestampHelper.getTimestamp();
 MongoTestHelper.clearCollection('ChatLog').done(function(result) {

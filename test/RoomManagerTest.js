@@ -1,10 +1,10 @@
 
 
 var assert = require('assert');
-var RoomManager = require('../node_modules/RoomManager.js').RoomManager;
-var RoomMongoHelper = require('../node_modules/RoomMongoHelper.js').RoomMongoHelper;
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
-var TimestampHelper = require('../node_modules/TimestampHelper.js');
+var RoomManager = require( __dirname + '/../node_modules/RoomManager.js').RoomManager;
+var RoomMongoHelper = require( __dirname + '/../node_modules/RoomMongoHelper.js').RoomMongoHelper;
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
+var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
 
 var respondCurrentRidTest = function() {
 	

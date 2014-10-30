@@ -1,9 +1,9 @@
 
-var RoomMongoHelper = require('../node_modules/RoomMongoHelper.js').RoomMongoHelper;
+var RoomMongoHelper = require( __dirname + '/../node_modules/RoomMongoHelper.js').RoomMongoHelper;
 var assert = require('assert');
 var deferred = require('deferred');
-var TimestampHelper = require('../node_modules/TimestampHelper.js');
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 
 var rid = 3;

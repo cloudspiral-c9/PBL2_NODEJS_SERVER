@@ -1,8 +1,8 @@
 
 var assert = require('assert');
-var RecipeProcessMongoHelper = require('../node_modules/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
-var TimestampHelper = require('../node_modules/TimestampHelper.js');
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var RecipeProcessMongoHelper = require( __dirname + '/../node_modules/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
+var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var rid = 3;
 var process1 = '卵を入れる';

@@ -1,8 +1,8 @@
 
 var assert = require('assert');
-var CreateRoomRouteModule = require('../route_modules/CreateRoomRouteModule.js').CreateRoomRouteModule;
-var RoomMongoHelper = require('../node_modules/RoomMongoHelper.js').RoomMongoHelper;
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var CreateRoomRouteModule = require( __dirname + '/../route_modules/CreateRoomRouteModule.js').CreateRoomRouteModule;
+var RoomMongoHelper = require( __dirname + '/../node_modules/RoomMongoHelper.js').RoomMongoHelper;
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var routeFuncTest = function() {
 

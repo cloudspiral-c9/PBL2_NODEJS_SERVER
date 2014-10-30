@@ -1,8 +1,8 @@
 
 
 var assert = require('assert');
-var IngredientMongoHelper = require('../node_modules/IngredientMongoHelper.js').IngredientMongoHelper;
-var MongoTestHelper = require('./MongoTestHelper.js').MongoTestHelper;
+var IngredientMongoHelper = require( __dirname + '/../node_modules/IngredientMongoHelper.js').IngredientMongoHelper;
+var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var foodNameAmountMap = {'フランスパン': 100, 'うどん': 200};
 var rid = 3;
