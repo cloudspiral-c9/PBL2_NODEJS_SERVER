@@ -11,14 +11,14 @@ var CreateRoomRouteModule = {
 		var def = deferred();
 
 		//クエリが不完全な場合は失敗フラグで終了
-		if (!(queries['rid'] && queries['name'], queries['limit'])) {
+		if (!(queries['rid'] && queries['name'])) {
 			def.resolve(false);
 			return def.promise;
 		}
 
 		var rid = queries['rid'];
 		var name = queries['name'];
-		var limit = queries['limit'];
+		var limit = !queries['limit'] ? null : queries['limit'];
 		var now = TimestampHelper.getTimestamp();
 		RoomManager.createNewRoom(rid, name, limit, now)
 
