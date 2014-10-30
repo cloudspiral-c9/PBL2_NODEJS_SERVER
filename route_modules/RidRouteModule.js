@@ -22,4 +22,4 @@ var RidRouteModule = {
 	}
 };
 
-exports = RidRouteModule;
+exports.RidRouteModule = RidRouteModule;

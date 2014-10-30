@@ -81,4 +81,4 @@ var ChatEventModule = {
 	}
 };
 
-exports = ChatEventModule;
+exports.ChatEventModule = ChatEventModule;

@@ -85,4 +85,4 @@ var NutritionEventModule = {
 	}
 };
 
-exports = NutritionEventModule;
+exports.NutritionEventModule = NutritionEventModule;

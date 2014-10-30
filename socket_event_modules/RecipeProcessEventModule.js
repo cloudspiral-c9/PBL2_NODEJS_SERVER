@@ -68,4 +68,4 @@ var RecipeProcessEventModule = {
 	}
 };
 
-exports = RecipeProcessEventModule;
+exports.RecipeProcessEventModule = RecipeProcessEventModule;

@@ -1,6 +1,6 @@
 
-var ServerHelper = require('ServerHelper.js');
-var SocketManager = require('SocketManager.js');
+var ServerHelper = require('ServerHelper.js').ServerHelper;
+var SocketManager = require('SocketManager.js').SocketManager;
 
 (function() {
 	var server = ServerHelper.startServer();
