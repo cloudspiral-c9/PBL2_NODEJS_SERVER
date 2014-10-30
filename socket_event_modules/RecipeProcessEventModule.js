@@ -29,15 +29,10 @@ var RecipeProcessEventModule = {
 
 		leaveRoom: function(data, resFunc) {
 			
-			if (!data.rid) {
-				resFunc(false);
-				return;
-			}
-
 			this.socket.close();
 		},
 
-		addProcess: function(data, resFunc) {
+		sendProcess: function(data, resFunc) {
 
 			if (!(data.rid && data.process && data.sender)) {
 				resFunc(false);
@@ -54,7 +49,7 @@ var RecipeProcessEventModule = {
 					if (data.processSequence) {
 						resObject.processSequence = data.processSequence;
 					}
-					this.io.to(data.rid).emit('broadcastAddProcess', resObject, function(data) {});
+					this.io.to(data.rid).emit('broadcastSendProcess', resObject, function(data) {});
 					resFunc(true);
 				} else {
 					resFunc(false);

@@ -25,20 +25,15 @@ var ChatEventModule = {
 
 			function(err) {
 				resFunc(false);
-			})
+			});
 		},
 
 		leaveRoom: function(data, resFunc) {
 
-			if (!data.rid) {
-				resFunc(false);
-				return;
-			}
-
 			this.socket.close();
 		},
 
-		addMessage: function(data, resFunc) {
+		sendMessage: function(data, resFunc) {
 			
 			if (!(data.rid && data.message && data.sender)) {
 				resFunc(false);
@@ -51,7 +46,7 @@ var ChatEventModule = {
 			.done(function(isSucceed) {
 				if (isSucceed) {
 					var resObject = {'message': data.message, 'sender': data.sender, 'timestamp': now};
-					this.io.to(data.rid).emit('broadcastAddMessage', resObject, function(data) {});
+					this.io.to(data.rid).emit('broadcastSendMessage', resObject, function(data) {});
 				}
 			},
 

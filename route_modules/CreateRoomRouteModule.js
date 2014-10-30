@@ -11,7 +11,7 @@ var CreateRoomRouteModule = {
 		var def = deferred();
 
 		//クエリが不完全な場合は失敗フラグで終了
-		if (!(queries['rid'] && queries['name'])) {
+		if (!(queries['rid'] && queries['name'] && queries['isGachi'])) {
 			def.resolve(false);
 			return def.promise;
 		}
@@ -20,7 +20,8 @@ var CreateRoomRouteModule = {
 		var name = queries['name'];
 		var limit = !queries['limit'] ? null : queries['limit'];
 		var now = TimestampHelper.getTimestamp();
-		RoomManager.createNewRoom(rid, name, limit, now)
+		var isGachi = queries['isGachi'];
+		RoomManager.createNewRoom(rid, name, limit, now, isGachi)
 
 		.done(function(result) {
 			def.resolve(result);
