@@ -2,6 +2,7 @@
 var NutritionMongoHelper = require('NutritionMongoHelper.js');
 var IngredientMongoHelper = require('IngredientMongoHelper.js');
 var RoomManager = require('RoomManager.js');
+var TimestampHelper = require('TimestampHelper.js');
 var deferred = require('deferred');
 
 var NutritionEventModule = {
@@ -65,7 +66,7 @@ var NutritionEventModule = {
 						return;
 					}
 
-					var now = new Date().toString();
+					var now = TimestampHelper.getTimestamp();
 					var resObject = {'nutrition': nutrition, 'ingredients': data.foodNameAmountMap, 'sender': sender, 'timestamp': now};
 					this.io.to(data.rid).emit('broadcastAddFood', resObject, function(data) {});
 					resFunc(true);

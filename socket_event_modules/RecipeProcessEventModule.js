@@ -1,5 +1,6 @@
 
 var RecipeProcessMongoHelper = require('RecipeProcessMongoHelper.js');
+var TimestampHelper = require('TimestampHelper.js');
 
 var RecipeProcessEventModule = {
 	
@@ -39,7 +40,7 @@ var RecipeProcessEventModule = {
 				return;
 			}
 
-			var now = new Date().toString();
+			var now = TimestampHelper.getTimestamp();
 			RecipeProcessMongoHelper.insertRecipeProcess(data.rid, data.process, data.sender, data.processSequence, now)
 			
 			.done(function(isSucceed) {

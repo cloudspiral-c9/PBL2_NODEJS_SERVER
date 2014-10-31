@@ -1,5 +1,6 @@
 
 var ChatLogMongHelper = require('ChatLogMongoHelper.js');
+var TimestampHelper = require('TimestampHelper.js');
 
 var ChatEventModule = {
 	
@@ -16,7 +17,7 @@ var ChatEventModule = {
 				return;
 			}
 
-			that = this;
+			var that = this;
 			ChatLogMongoHelper.getChatLog(data.rid, 0, 50)
 			.done(function(result) {
 				that.socket.join(data.rid);
@@ -29,7 +30,6 @@ var ChatEventModule = {
 		},
 
 		leaveRoom: function(data, resFunc) {
-
 			this.socket.close();
 		},
 
@@ -40,7 +40,7 @@ var ChatEventModule = {
 				return;
 			}
 
-			var now = new Date().toString();
+			var now = TimestampHelper.getTimestamp();
 			ChatLogMongoHelper.insertMessage(data.rid, data.message, data.sender, now)
 			
 			.done(function(isSucceed) {
