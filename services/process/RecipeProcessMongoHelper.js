@@ -46,8 +46,8 @@ var RecipeProcessMongoHelper = (function() {
 			}
 
 			var query = {'rid': rid};
-			var cursor = db.collection('Process').find(query, {'sort': [ ['timestamp': 'desc'] ] });
-
+			var cursor = db.collection('Process').find(query, {'sort': [['timestamp', 'desc']]});
+			
 			var result = new Array();
 			cursor.each(function(err, doc) {
 
@@ -77,3 +77,5 @@ var RecipeProcessMongoHelper = (function() {
 	return {'insertRecipeProcess': insertRecipeProcess, 'getRecipeProcesses': getRecipeProcesses};
 
 })();
+
+exports.RecipeProcessMongoHelper = RecipeProcessMongoHelper;

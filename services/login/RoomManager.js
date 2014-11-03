@@ -1,6 +1,6 @@
 
 var MongoUtil = require( __dirname + '/../util/MongoUtil.js');
-var TimestampHelper = require( __dirname + '/../util/Timestamphelper.js');
+var TimestampHelper = require( __dirname + '/../util/TimestampHelper.js');
 var RoomNumberMongoHelper = require( __dirname + '/RoomNumberMongoHelper.js').RoomNumberMongoHelper;
 var LoginMongoHelper = require( __dirname + '/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
@@ -44,7 +44,8 @@ var RoomManager = (function() {
 						} 
 
 						delete query.members;
-						deferred.resolve( JSON.stringify(query) );
+						delete query._id;
+						deferred.resolve( query );
 
 					}, function(err) {
 						console.log(err);
@@ -80,8 +81,13 @@ var RoomManager = (function() {
 					return;
 				}
 
+				if (!result) {
+					deferred.resolve(false);
+					return;
+				}
+
 				delete result._id;
-				deferred.resolve( JSON.stringify(result) );
+				deferred.resolve( result );
 			});
 
 		};
@@ -111,8 +117,7 @@ var RoomManager = (function() {
 			def.resolve(false);
 		});
 
-		var promise = MongoUtil.executeMongoUseFunc(executeFunc);
-		return promise;
+		return def.promise;
 	};
 
 
@@ -189,7 +194,7 @@ var RoomManager = (function() {
 
 					//DBの更新
 					var updateQuery = {'$set': {'members': members}};
-					db.update({'rid': rid}, updateQuery, function(err, count, status) {
+					db.collection('Room').update({'rid': rid}, updateQuery, function(err, count, status) {
 
 						db.close();
 
@@ -235,7 +240,7 @@ var RoomManager = (function() {
 				//membersを減らす
 				members.splice(members.indexOf(userID), 1);
 				var updateQuery = {'$set': {'members': members}};
-				db.update({'rid': rid}, updateQuery, function(err, count, status) {
+				db.collection('Room').update({'rid': rid}, updateQuery, function(err, count, status) {
 
 					db.close();
 
@@ -269,8 +274,6 @@ var RoomManager = (function() {
 
 		getRoom(rid).done(function(room) {
 
-			db.close();
-
 			if (!room) {
 				def.resolve(false);
 				return;
@@ -285,6 +288,8 @@ var RoomManager = (function() {
 			console.log(err);
 			def.resolve(false);
 		});	
+
+		return def.promise;
 	};
 
 

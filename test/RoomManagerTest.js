@@ -1,126 +1,121 @@
 
 
 var assert = require('assert');
-var RoomManager = require( __dirname + '/../node_modules/RoomManager.js').RoomManager;
-var RoomMongoHelper = require( __dirname + '/../node_modules/RoomMongoHelper.js').RoomMongoHelper;
+var RoomManager = require( __dirname + '/../services/login/RoomManager.js').RoomManager;
 var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
-var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
+var TimestampHelper = require( __dirname + '/../services/util/TimestampHelper.js');
 
-var respondCurrentRidTest = function() {
-	
-	MongoTestHelper.clearCollection('RoomNumber')
-
-	.done(function(result) {
-		
-		RoomManager.respondCurrentRid()
-		.done(function(crid) {
-
-			console.log('respond1');
-			console.log(crid);
-
-			assert.strictEqual(crid, 1);
-
-			RoomManager.respondCurrentRid()
-			.done(function(crid2) {
-				
-				console.log('respond2');
-				console.log(crid2);
-
-				assert.strictEqual(crid2, 2);
-			});
-		}, 
-		function(err) {});
-		
-	},
-	function(err) {});
-};
-
-respondCurrentRidTest();
-
-
-
-
-var rid = 1;
-var name = 'testRoom';
+var description = 'This is Test Room1';
+var title = 'testRoom1';
 var limit = 2;
-var now = TimestampHelper.getTimestamp();
-var roomTest = function() {
-	
+var userId1 = 'mizuno';
+var userId2 = 'saint';
+var type = 'gachi';
+
+var members = [userId1];
+var expected = {'rid': 1, 'description': description, 'title': title, 'limit': limit, 'type': type};
+
+MongoTestHelper.clearCollection('RoomNumber')
+.done(function(res) {
+
 	MongoTestHelper.clearCollection('Room')
+	.done(function(res2) {
 
-	.done(function(result) {
+		RoomManager.createNewRoom(description, title, limit, userId1, type)
+		.done(function(room) {
+			console.log('room1');
+			console.log(room);
+			delete room.timestamp;
+			assert.deepEqual(room, expected);
 
-		RoomManager.createNewRoom(rid, name, limit, now)
-		.done(function(result) {
+			RoomManager.getRoom(1)
+			.done(function(room2) {
+				
+				console.log('room2')
+				console.log(room2)
+				delete room2.timestamp;
+				expected.members = members;
+				assert.deepEqual(room2, expected);
 
-			console.log(result);
-			RoomMongoHelper.getRoom(rid)
-			.done(function(result2) {
-			
-				if (!result) {
-					assert.strictEqual(result2, null);
-				}
+				RoomManager.isExist(1)
+				.done(function(isExist) {
 
-				var expected = {'rid': rid, 'name': name, 'num': 1, 'limit': limit, 'timestamp': now};
-				delete result2._id;
-				console.log(result2);
+					assert.strictEqual(isExist, true);
 
-				assert.deepEqual(result2, expected);
-
-				RoomManager.addMember(rid)
-				.done(function(result3) {
-
-					RoomMongoHelper.getRoom(rid)
-					.done(function(result4) {
-
-						var expected2 = {'rid': rid, 'name': name, 'num': 2, 'limit': limit, 'timestamp': now};
-						delete result4._id;
-						console.log('after add member1');
-						console.log(result4);
-						assert.deepEqual(result4, expected2);
-
-						RoomManager.addMember(rid)
-						.done(function(result5) {
-							
-							console.log('after add member2');
-							console.log(result5);
-							assert.strictEqual(result5, false);
-
-							RoomMongoHelper.getRoom(rid)
-							.done(function(result6) {
-
-								console.log(result6);
-								delete result6._id;
-								assert.deepEqual(expected2, result6);
-
-								RoomManager.reduceMember(rid)
-								.done(function(result7) {
-									
-									console.log('after reduce member')
-									console.log(result7);
-									RoomMongoHelper.getRoom(rid)
-									.done(function(result8) {
-										delete result8._id;
-										console.log(result8);
-										assert.deepEqual(result8, expected);
-
-									}, function(err){});
-
-								}, function(err) {})
-
-							}, function(err) {});
-
-						}, function(err) {});
-
-					}, function(err) {});
-					
 				}, function(err) {});
 
-			}, function(err) { });
-		},
-		function(err) {});
-	},
-	function(err) {});
-};
+				RoomManager.isExist(2)
+				.done(function(isExist2) {
 
-roomTest();
+					assert.strictEqual(isExist2, false);
+				
+				}, function(err) {})
+
+				RoomManager.addMember(1, userId2)
+				.done(function(result3) {
+
+
+					RoomManager.getRoom(1)
+					.done(function(room3) {
+
+						console.log('room3');
+						console.log(room3);
+						expected.members = [userId1, userId2];
+						delete room3.timestamp;
+						assert.deepEqual(room3, expected);
+
+						RoomManager.isMemberOf(1, userId1)
+						.done(function(isMember) {
+							
+							assert.strictEqual(isMember, true);
+							RoomManager.addMember(1, 'hogehoge2')
+							.done(function(result8) {
+								assert.strictEqual(result8, false);
+
+								RoomManager.removeMember(1, userId2)
+								.done(function(result5) {
+
+									RoomManager.getRoom(1)
+									.done(function(room4) {
+
+										console.log('room4');
+										console.log(room4);
+										delete room4.timestamp;
+										expected.members = [userId1];
+										assert.deepEqual(room4, expected);
+
+										RoomManager.removeRoom(1)
+										.done(function(res6) {
+
+											RoomManager.isExist(1)
+											.done(function(isExistRoom) {
+
+												assert.strictEqual(isExistRoom, false);
+
+											}, function(err) {});
+
+										}, function(err) {});
+
+									}, function(err) {})
+								});
+
+
+							}, function(err) {})
+						});
+
+						RoomManager.isMemberOf('hogehoge')
+						.done(function(isMember2) {
+							assert.strictEqual(isMember2, false);
+						}, function(err) {})
+
+					}, function(err) {})
+
+				}, function(err) {});
+
+			});
+
+		}, function(err) {});
+
+	}, function(err) {});
+
+}, function(err) {})

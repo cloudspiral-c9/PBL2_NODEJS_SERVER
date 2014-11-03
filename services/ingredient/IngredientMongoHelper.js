@@ -1,6 +1,6 @@
 
 
-var MongoUtil = require( __dirname + '/../MongoUtil.js');
+var MongoUtil = require( __dirname + '/../util/MongoUtil.js');
 var deferred = require('deferred');
 
 var IngredientMongoHelper = (function(){

@@ -1,5 +1,5 @@
 
-var LoginMongoHelper = require( __dirname + '../../services/login/LoginMongoHelper.js').LoginMongoHelper;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
 var LogoutRouteModule = {
@@ -11,7 +11,7 @@ var LogoutRouteModule = {
 
 		if (queries.id) {
 
-			removeLoginUserId(id)
+			LoginMongoHelper.removeLoginUserId(id)
 			.done(function(result) {
 				def.resolve(result);
 			}, function(err) {
@@ -21,6 +21,8 @@ var LogoutRouteModule = {
 		}
 
 		return def.promise;
-	};
+	}
 
 };
+
+exports.LogoutRouteModule = LogoutRouteModule;

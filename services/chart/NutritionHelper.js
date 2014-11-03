@@ -1,7 +1,9 @@
 
-var NutritionMongoHelper = require(__dirname + '/NutritionMongoHelper.js');
+var NutritionMongoHelper = require(__dirname + '/NutritionMongoHelper.js').NutritionMongoHelper;
 var deferred = require('deferred');
 
+
+//要amount系の実装
 var NutritionHelper = (function() {
 
 
@@ -35,11 +37,10 @@ var NutritionHelper = (function() {
 
 		var def = deferred();
 
-		if (!ingredientData || !ingredientData.ingredient) {
-			return;
+		if (!ingredientData) {
+			def.resolve(false)
+			return def.promise;
 		}
-
-		var ingredient = ingredientData.ingredient;
 		
 		//ratesのデータを作成する
 		NutritionMongoHelper.getIdealNutrition()
@@ -65,7 +66,7 @@ var NutritionHelper = (function() {
 	}
 
 
-	var getNutrtionDatas = function(rid) {
+	var getNutritionDatas = function(rid) {
 
 		var def = deferred();
 
@@ -75,7 +76,7 @@ var NutritionHelper = (function() {
 		}
 
 		var retDataArray = new Array();
-		NutritionMongoHelper.getIdealNutrition
+		NutritionMongoHelper.getIdealNutrition()
 		.done(function(idealNutrition) {
 
 			NutritionMongoHelper.getNutritionsByRid(rid)

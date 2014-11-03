@@ -1,6 +1,6 @@
 
 var MongoUtil = require( __dirname + '/../util/MongoUtil.js');
-var IngredientMongoHelper = require( __dirname + '/../ingredient/')
+var IngredientMongoHelper = require( __dirname + '/../ingredient/IngredientMongoHelper.js').IngredientMongoHelper;
 var deferred = require('deferred');
 
 
@@ -13,8 +13,10 @@ var NutritionMongoHelper = (function() {
 			
 			db.collection('idealNutrition').findOne({}, function(err, doc) {
 				
+				db.close();
+
 				if (err) {
-					db.close();
+
 					console.log(err);
 					deferred.resolve(false);
 					return;
@@ -29,20 +31,34 @@ var NutritionMongoHelper = (function() {
 		return promise;
 	};
 
+	var _calcNutritionToAmount = function(nutrition, amount) {
+
+		Object.keys(nutrition).forEach(function(nutritionName) {
+					
+			if (nutritionName === 'name') {
+				return;
+			}
+
+			nutrition[nutritionName] *= amount;
+		});
+
+		return nutrition;
+	}
 
 	//ingredientに対応する栄養価を取得する
 	var getNutrition = function(ingredientData) {
 
 		var executeFunc = function(db, deferred) {
 
-			if (!ingredientData.ingredient) {
+			if (!(ingredientData.ingredient && ingredientData.amount) ) {
 				db.close();
 				deferred.resolve(null);
 				return;
 			}
 			
+			var amount = ingredientData.amount;
 			var query = {'name': ingredientData.ingredient};
-			db.collection('nutrition').findOne(query, function(err, doc) {
+			db.collection('nutrition').findOne(query, function(err, nutrition) {
 
 				db.close();
 
@@ -52,8 +68,9 @@ var NutritionMongoHelper = (function() {
 					return;
 				}
 
-				delete doc._id;
-				deferred.resolve(doc);
+				delete nutrition._id;
+				var calcedNutrition = _calcNutritionToAmount(nutrition, amount);
+				deferred.resolve(calcedNutrition);
 			});
 		};
 
@@ -63,16 +80,31 @@ var NutritionMongoHelper = (function() {
 
 
 	//ingredientDataの配列からorクエリを作成する
-	var _makeOrQuery = function(ingredientDatas) {
+	var _makeFoodAmountMap = function(ingredientDatas) {
 		
-		var orArray = new Array();
+		var foodAmountMap = new Object();
 		for (var i = 0; i < ingredientDatas.length; i++) {
-			orArray.push({'ingredient': ingredientData[i].ingredient});
+			
+			if (! (ingredientDatas[i].ingredient && ingredientDatas[i].amount) ) {
+				continue;
+			}
+
+			foodAmountMap[ingredientDatas[i].ingredient] = ingredientDatas[i].amount;
 		}
+
+		return foodAmountMap;
+	}
+
+	var _makeOrQuery = function(foodAmountMap) {
+
+		var orArray = new Array();
+		Object.keys(foodAmountMap).forEach(function(ingredient) {
+			orArray.push({'name': ingredient});
+		})
 
 		var query = {'$or': orArray};
 		return query;
-	}
+	};
 
 
 	//ridに対応する部屋のnutritionをかえす．
@@ -89,12 +121,12 @@ var NutritionMongoHelper = (function() {
 			IngredientMongoHelper.getIngredients(rid)
 			.done(function(ingredientDatas) {
 
-				var query = _makeOrQuery(ingredientDatas);
+				var foodAmountMap = _makeFoodAmountMap(ingredientDatas);
+				var query = _makeOrQuery(foodAmountMap);
 				var cursor = db.collection('nutrition').find(query);
 
-				cursor.toArray(function(err, result) {
-
-					db.close();
+				var result = new Array();
+				cursor.each(function(err, nutrition) {
 
 					if (err) {
 						console.log(err);
@@ -102,7 +134,17 @@ var NutritionMongoHelper = (function() {
 						return;
 					}
 
-					deferred.resolve(result);
+					if (!nutrition) {
+						db.close();
+						deferred.resolve(result);
+					} else {
+						
+						var amount = foodAmountMap[nutrition.name];
+						
+						delete nutrition._id;
+						var retDoc = _calcNutritionToAmount(nutrition, amount);						
+						result.push(retDoc);
+					}
 				});
 
 			}, function(err) {
@@ -118,7 +160,7 @@ var NutritionMongoHelper = (function() {
 
 
 
-	return {'getNutrition' : getNutrition, 'getIdealNutrition': getIdealNutrition, 'getNutrtionsByRid': getNutritionsByRid};
+	return {'getNutrition' : getNutrition, 'getIdealNutrition': getIdealNutrition, 'getNutritionsByRid': getNutritionsByRid};
 
 })();
 

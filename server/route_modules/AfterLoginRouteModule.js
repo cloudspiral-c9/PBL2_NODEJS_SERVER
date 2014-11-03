@@ -16,7 +16,7 @@ var AfterLoginRouteModule = {
 		passport.authenticate('google', redirects);
 
 		return def.promise;
-	};
+	}
 };
 
 exports.AfterLoginRouteModule = AfterLoginRouteModule;

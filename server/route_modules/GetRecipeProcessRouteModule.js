@@ -45,4 +45,4 @@ var GetRecipeProcessRouteModule = {
 	}
 };
 
-exports.GetNutritionRouteModule = GetNutritionRouteModule;
+exports.GetRecipeProcessRouteModule = GetRecipeProcessRouteModule;

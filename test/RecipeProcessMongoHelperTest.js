@@ -1,7 +1,7 @@
 
 var assert = require('assert');
-var RecipeProcessMongoHelper = require( __dirname + '/../node_modules/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
-var TimestampHelper = require( __dirname + '/../node_modules/TimestampHelper.js');
+var RecipeProcessMongoHelper = require( __dirname + '/../services/process/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
+var TimestampHelper = require( __dirname + '/../services/util/TimestampHelper.js');
 var MongoTestHelper = require( __dirname + '/MongoTestHelper.js').MongoTestHelper;
 
 var rid = 3;
@@ -12,7 +12,7 @@ var processSequence1 = 2;
 var processSequence2 = 3;
 var now = TimestampHelper.getTimestamp();
 
-var expected = [{'rid': rid, 'process': process1, 'sender': sender, 'timestamp': now, 'processSequence': processSequence1}, {'rid': rid, 'process': process2, 'sender': sender, 'timestamp': now, 'processSequence': processSequence2}];
+var expected = [{'process': process1, 'sender': sender, 'timestamp': now, 'index': processSequence1}, {'process': process2, 'sender': sender, 'timestamp': now, 'index': processSequence2}];
 var getRecipeProcessesTest = function() {
 
 	MongoTestHelper.clearCollection('Process')
@@ -25,15 +25,12 @@ var getRecipeProcessesTest = function() {
 			.done(function(result2) {
 
 				RecipeProcessMongoHelper.getRecipeProcesses(rid)
-				.done(function(processes) {
+				.done(function(actual) {
 
-					var actual = JSON.parse(processes);
-					delete actual[0]._id;
-					delete actual[1]._id;
 					console.log(actual);
 					assert.deepEqual(actual, expected);
 
-				})
+				});
 
 			}, function(err) { });
 

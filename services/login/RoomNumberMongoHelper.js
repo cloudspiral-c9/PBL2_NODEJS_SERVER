@@ -26,7 +26,7 @@ var RoomNumberMongoHelper = (function() {
 		};
 
 		var promise = MongoUtil.executeMongoUseFunc(executeFunc);
-		return primise;
+		return promise;
 	};
 
 	var getCurrentRid = function() {
@@ -43,10 +43,14 @@ var RoomNumberMongoHelper = (function() {
 					deferred.resolve(false);
 				}
 
-				//DBになかった場合はridを1として新たに作成
-				//rid = 1として結果を返す
-				if (!doc) {
+				if (doc) {
 					
+					deferred.resolve(doc.rid);
+				
+				} else {
+
+					//DBになかった場合はridを1として新たに作成
+					//rid = 1として結果を返す
 					upsertCurrentRid(1).done(function(result) {
 						
 						if (!result) {
@@ -61,9 +65,8 @@ var RoomNumberMongoHelper = (function() {
 						deferred.resolve(false);
 						return;
 					});
-				}
 
-				deferred.resolve(doc.rid);
+				}
 			});
 		};
 

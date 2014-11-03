@@ -1,11 +1,11 @@
 
 
-var RoomNumberMongoHelper = require( __dirname + '/../node_modules/RoomNumberMongoHelper.js').RoomNumberMongoHelper;
+var RoomNumberMongoHelper = require( __dirname + '/../services/login/RoomNumberMongoHelper.js').RoomNumberMongoHelper;
 var assert = require('assert');
 var deferred = require('deferred');
 var MongoTestHelper = require(__dirname + '/MongoTestHelper.js').MongoTestHelper;
 
-var RoomNumberTest = function() {
+var RoomNumberMongoHelperTest = function() {
 
 	MongoTestHelper.clearCollection('RoomNumber')
 	.done(function(result) {
@@ -15,40 +15,20 @@ var RoomNumberTest = function() {
 
 			console.log('first rid');
 			console.log(rid);
-			assert.strictEqual(rid, null);
+			assert.strictEqual(rid, 1);
 
-
-			RoomNumberMongoHelper.upsertCurrentRid(rid)
+			RoomNumberMongoHelper.upsertCurrentRid(3)
 			.done(function(result) {
 
 				RoomNumberMongoHelper.getCurrentRid()
 				.done(function(rid2) {
 
-					var expected = 1;
-					var actual = rid2.currentRoomNumber;
+					var expected = 3;
 
 					console.log('after upsert');
-					console.log(actual);
+					console.log(rid2);
 
-					assert.strictEqual(actual, expected);
-
-					RoomNumberMongoHelper.upsertCurrentRid(4)
-					.done(function(result) {
-
-						RoomNumberMongoHelper.getCurrentRid()
-						.done(function(rid3) {
-
-							var expected = 4;
-							var actual2 = rid3.currentRoomNumber;
-
-							console.log('after upsert 4');
-							console.log(actual2);
-
-							assert.strictEqual(actual2, 4);
-
-						}, function(err) {});
-
-					}, function(err) {});
+					assert.strictEqual(rid2, expected);
 
 				}, function(err) {});
 
@@ -59,4 +39,4 @@ var RoomNumberTest = function() {
 	}, function(err) {});
 }
 
-RoomNumberTest();
+RoomNumberMongoHelperTest();

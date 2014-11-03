@@ -1,6 +1,6 @@
 
 
-var RoomManager = require('RoomManager.js').RoomManager;
+var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
 var deferred = require('deferred');
 
 var ReduceMemberRouteModule = {

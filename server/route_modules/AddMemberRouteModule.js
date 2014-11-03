@@ -1,9 +1,9 @@
 
-var RoomManager = require('RoomManager.js').RoomManager;
-var LoginMongoHelper = require('LoginMongoHelper.js').LoginMongoHelper;
+var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
-var AddMemeberRouteModule = {
+var AddMemberRouteModule = {
 
 	route: '/addmember',
 	routeFunc: function(queries) {

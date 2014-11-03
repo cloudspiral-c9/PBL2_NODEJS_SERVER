@@ -11,7 +11,7 @@ var LoginRouteModule = {
 		passport.authenticate('google');
 
 		return def.promise;
-	};
+	}
 };
 
 exports.LoginRouteModule = LoginRouteModule;

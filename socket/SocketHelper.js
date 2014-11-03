@@ -18,7 +18,7 @@ var SocketHelper = {
 
 	_loadSocketEventModules: function() {
 		
-		var readPath = __dirname + '/../socket_event_modules';
+		var readPath = __dirname + '/socket_event_modules';
 		var fileNames = fs.readdirSync(readPath);
 		var moduleFileNames = fileNames.filter(function(fileName) {
 			return fs.statSync(readPath + '/' + fileName).isFile() && /.js$/.test(fileName);
