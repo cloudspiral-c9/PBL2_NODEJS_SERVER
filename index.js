@@ -1,10 +1,10 @@
 
-var ServerHelper = require('ServerHelper.js').ServerHelper;
-var SocketManager = require('SocketManager.js').SocketManager;
+var ServerHelper = require( __dirname + '/server/ServerHelper.js').ServerHelper;
+var SocketHelper = require( __dirname + '/socket/SocketHelper.js').SocketHelper;
 
 (function() {
 	var server = ServerHelper.startServer();
-	SocketManager.activateSocket(server);
+	SocketHelper.activateSocket(server);
 })();
 
 

@@ -7,7 +7,7 @@ var executeMongoUseFunc = function(executeFunc) {
 
 	var def = deferred();
 
-	MongoClient.connect('mongodb://localhost/recipeer', function(err, db) {
+	MongoClient.connect('mongodb://localhost/recipeers', function(err, db) {
 
 		//MongoDBに接続できない場合は例外を発生
 		if (err) {

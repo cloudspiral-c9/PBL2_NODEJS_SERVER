@@ -2,7 +2,7 @@
 var socketIO = require('socket.io');
 var fs = require('fs');
 
-var SocketManager = {
+var SocketHelper = {
 	
 	io: null,
 	namespaces: new Array(),
@@ -49,4 +49,4 @@ var SocketManager = {
 	},
 };
 
-exports.SocketManager = SocketManager;
+exports.SocketHelper = SocketHelper;

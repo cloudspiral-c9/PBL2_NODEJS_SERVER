@@ -1,28 +1,31 @@
 
+
 var RoomManager = require('RoomManager.js').RoomManager;
 var deferred = require('deferred');
 
-var AddMemeberRouteModule = {
-
-	route: '/addmember',
+var ReduceMemberRouteModule = {
+	
+	route: '/reducemember',
 	routeFunc: function(queries) {
 		
 		var def = deferred();
 
 		//クエリが不完全な場合は失敗フラグで終了
-		if (!queries['rid']) {
+		if (! (queries['rid'] && queries['userID']) ) {
 			def.resolve(false);
 			return def.promise;
 		}
 
 		var rid = queries['rid'];
-		RoomManager.addMember(rid)
+		var userId = queries['userID'];
+		RoomManager.removeMember(rid, userID)
 
 		.done(function(result) {
 			def.resolve(result);
 		}, 
 
 		function(err) {
+			console.log(err);
 			def.resolve(false);
 		});
 
@@ -30,4 +33,4 @@ var AddMemeberRouteModule = {
 	}
 };
 
-exports.AddMemberRouteModule = AddMemberRouteModule;
+exports.ReduceMemberRouteModule = ReduceMemberRouteModule;

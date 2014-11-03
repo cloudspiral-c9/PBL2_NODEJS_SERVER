@@ -5,87 +5,63 @@ var deferred = require('deferred');
 
 var NutritionMongoHelper = (function() {
 
-	var getNutritionByFoodNames = function(foodNameAmountMap) {
+	//一食あたりの目安の栄養価を取得する
+	var getIdealNutrition = function() {
 
-		var that = this;
-		var executeFunc = function(db, def) {
+		var executeFunc = function(db, deferred) {
+			
+			db.collection('idealNutrition').findOne({}, function(err, doc) {
+				
+				if (err) {
+					db.close();
+					console.log(err);
+					deferred.resolve(false);
+					return;
+				}
 
-			if ()
-		}
-	}
+				deferred.resolve(doc);
+			});
+		};
 
-	return {'getNutritionByFoodNames' : getNutritionByFoodNames};
+		var promise = MongoUtil.executeMongoUseFunc(executeFunc);
+		return promise;
+	};
+
+
+	//ingredientに対応する栄養価を取得する
+	var getNutrition = function(ingredientData) {
+
+		var executeFunc = function(db, deferred) {
+
+			if (!ingredientData.ingredient) {
+				db.close();
+				deferred.resolve(null);
+				return;
+			}
+			
+			var query = {'name': ingredientData.ingredient};
+			db.collection('nutrition').findOne(query, function(err, doc) {
+
+				db.close();
+
+				if (err) {
+					console.log(err);
+					deferred.resolve(false);
+					return;
+				}
+
+				delete doc._id;
+				deferred.resolve(doc);
+			});
+		};
+
+		var promise = MongoUtil.executeMongoUseFunc(executeFunc);
+		return promise;
+	};
+
+	return {'getNutrition' : getNutrition, 'getIdealNutrition': getIdealNutrition};
 
 })();
 
 //外部モジュールにメソッドを公開
 exports.NutritionMongoHelper = NutritionMongoHelper;
-
-
-/////////////////////////////////////////////////////////////
-TODO　要修正 データの形式
-
-	getNutritionByFoodNames: function(foodNameAmountMap) {
-
-		var that = this;
-
-		var executeFunc = function(db, def){
-			
-			if (!foodNameAmountMap) {
-				def.resolve(false);
-			}
-
-			var query = that._makeQuery(foodNameAmountMap);
-			
-			var collection = db.collection('nutrition');
-			var cursor = collection.find(query);
-
-			var result = new Array();
-			cursor.each(function(err, doc) {
-				
-				if (err) {
-					console.log(err);
-				}
-
-				if (doc == null) {
-					db.close();
-					var jsonResult = JSON.stringify(result);
-					def.resolve(jsonResult);
-				} else {
-					var retDoc = that._calcNutritions(foodNameAmountMap, doc);
-					result.push(retDoc);
-				}
-
-			});
-		};
-
-		var promise = this._executeMongoUseFunc(executeFunc);
-		return promise;
-	},
-
-	_makeQuery: function(foodNameAmountMap) {
-		
-		var orArray = new Array();
-		Object.keys(foodNameAmountMap).forEach(function(foodName) {
-			orArray.push({'name': foodName});
-		});
-		var query = {'$or': orArray};
-		return query;
-	},
-
-	//Amountを考慮し栄養価を計算した後のMapを返す
-	_calcNutritions: function(foodNameAmountMap, doc) {
-		
-		var retDoc = new Object();
-		retDoc.name = doc.name;
-		Object.keys(doc).forEach(function(nutritionName) {
-			if (nutritionName !== 'name') {
-				retDoc[nutritionName] = doc[nutritionName] * foodNameAmountMap[retDoc.name];
-			}
-		});
-
-		return retDoc;
-	}
-
-}
-
