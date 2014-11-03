@@ -1,5 +1,6 @@
 
 var RoomManager = require('RoomManager.js').RoomManager;
+var LoginMongoHelper = require('LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
 var AddMemeberRouteModule = {
@@ -17,16 +18,32 @@ var AddMemeberRouteModule = {
 
 		var rid = queries['rid'];
 		var userId = queries['userID'];
-		RoomManager.addMember(rid, userId)
+		
+		LoginMongoHelper.isLoggedIn(userId)
+		.done(function(isLoggedIn) {
 
-		.done(function(result) {
-			def.resolve(result);
-		}, 
+			if (isLoggedIn) {
+				
+				RoomManager.addMember(rid, userId)
 
-		function(err) {
+				.done(function(result) {
+					def.resolve(result);
+				}, 
+
+				function(err) {
+					console.log(err);
+					def.resolve(false);
+				});
+
+			} else {
+				def.resolve(false);
+			}
+			
+		}, function(err) {
+			console.log(err);
 			def.resolve(false);
 		});
-
+		
 		return def.promise;
 	}
 };

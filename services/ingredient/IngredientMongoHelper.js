@@ -48,17 +48,25 @@ var IngredientMongoHelper = (function(){
 			var query = {'rid': rid};
 			var cursor = db.collection('Ingredient').find(query);
 
-			cursor.toArray(function(err, result) {
-
-				db.close();
+			var result = new Array();
+			cursor.each(function(err, doc) {
 				
 				if (err) {
 					console.log(err);
+					db.close();
 					deferred.resolve(false);
 					return;
 				}
 
-				deferred.resolve(true);
+				if (!doc) {
+					db.close();
+					deferred.resolve(result);
+				} else {
+					delete doc._id;
+					delete doc.rid;
+					result.push(doc);
+				}
+				
 			});
 		};
 

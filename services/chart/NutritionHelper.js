@@ -4,6 +4,31 @@ var deferred = require('deferred');
 
 var NutritionHelper = (function() {
 
+
+	var _calcNutritionRate = function(nutrition, idealNutrition) {
+
+		if ( !(nutrition && idealNutrition) ) {
+			return null;
+		}
+
+		var retDoc = {'ingredient': nutrition.name, 'rates': {}};
+		
+		var rates = new Object();
+		Object.keys(nutrition).forEach(function(nutritionName) {
+			
+			//idealNutritionにない要素はスキップ
+			if (!idealNutrition[nutritionName]) {
+				return;
+			}
+
+			var rate = nutrition[nutritionName] / idealNutrition[nutritionName];
+			rates[nutritionName] = rate;
+		});
+
+		retDoc.rates = rates;
+		return retDoc;
+	};
+
 	//DBからidealNutritionとingredientDataに対応するnutiritonのデータを取得し，
 	//栄養価の割合データを返す．
 	var getNutritionRates = function(ingredientData) {
@@ -15,8 +40,7 @@ var NutritionHelper = (function() {
 		}
 
 		var ingredient = ingredientData.ingredient;
-		var retData = {'ingredient': ingredient, 'rates': []};
-
+		
 		//ratesのデータを作成する
 		NutritionMongoHelper.getIdealNutrition()
 		.done(function(idealNutrition) {
@@ -24,19 +48,7 @@ var NutritionHelper = (function() {
 			NutritionMongoHelper.getNutrition(ingredientData)
 			.done(function(nutrition) {
 
-				var rates = new Object();
-				Object.keys(nutrition).forEach(function(nutritionName) {
-
-					//idealNutritionにあるものだけを算出する
-					if (!idealNutrition[nutritionName]) {
-						return;
-					}
-
-					var rate = nutrition[nutritionName] / idealNutrition[nutritionName];
-					rates[nutritionName] = rate;
-				});
-
-				retData.rates = rates;
+				var retData = _calcNutritionRate(nutrition, idealNutrition);
 				def.resolve(retData);
 
 			}, function(err) {
@@ -51,8 +63,47 @@ var NutritionHelper = (function() {
 
 		return def.promise;
 	}
+
+
+	var getNutrtionDatas = function(rid) {
+
+		var def = deferred();
+
+		if (!rid) {
+			def.resolve(false);
+			return def.promise;
+		}
+
+		var retDataArray = new Array();
+		NutritionMongoHelper.getIdealNutrition
+		.done(function(idealNutrition) {
+
+			NutritionMongoHelper.getNutritionsByRid(rid)
+			.done(function(nutritionArray) {
+
+				for (var i = 0; i < nutritionArray.length; i++) {
+					var nutrition = nutritionArray[i];
+					var retDoc = _calcNutritionRate(nutrition, idealNutrition);
+					retDataArray.push(retDoc);
+				}
+
+				def.resolve(retDataArray);
+
+			}, function(err) {
+				console.log(err);
+				def.resolve(false);
+			});
+
+		}, function(err) {
+			console.log(err);
+			def.resolve(false);
+		});
+
+		return def.promise;
+
+	}
 	
-	return {'getNutritionRates': getNutritionRates};
+	return {'getNutritionRates': getNutritionRates, 'getNutritionDatas': getNutritionDatas};
 
 })();
 

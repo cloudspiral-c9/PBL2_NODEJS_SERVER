@@ -54,21 +54,30 @@ var ChatLogMongoHelper = (function() {
 				cursor.limit(limit);
 			}
 
-			cursor.toArray(function(err, result) {
-
-				db.close();
+			var result = new Array();
+			cursor.each(function(err, doc) {
 
 				if (err) {
 					console.log(err);
+					db.close();
 					deferred.resolve(false);
 					return;
 				}
 
-				deferred.resolve(JSON.stringify(result));
+				if (!doc) {
+					db.close();
+					deferred.resolve(result);
+					return;
+				} else {
+					delete doc._id;
+					delete doc.rid;
+					result.push(doc);
+				}
+
 			});
 		};
 
-		var promise = MongoUtil.executeMOngoUseFunc(executeFunc);
+		var promise = MongoUtil.executeMongoUseFunc(executeFunc);
 		return promise;
 	};
 

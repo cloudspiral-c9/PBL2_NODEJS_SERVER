@@ -11,6 +11,7 @@ var RecipeProcessMongoHelper = (function() {
 			if (!(rid && process && sender)) {
 				db.close();
 				deferred.resolve(false);
+				return;
 			}
 
 			var query = {'rid': rid, 'process': process, 'sender': sender, 'index': index, 'timestamp': now};
@@ -47,17 +48,25 @@ var RecipeProcessMongoHelper = (function() {
 			var query = {'rid': rid};
 			var cursor = db.collection('Process').find(query, {'sort': [ ['timestamp': 'desc'] ] });
 
-			cursor.toArray(function(err, result) {
+			var result = new Array();
+			cursor.each(function(err, doc) {
 
-				db.close();
-				
 				if (err) {
+					db.close();
 					console.log(err);
 					deferred.resolve(false);
 					return;
 				}
 
-				deferred.resolve(JSON.stringify(result));
+				if (!doc) {
+					db.close();
+					deferred.resolve(result);
+				} else {
+					delete doc._id;
+					delete doc.rid;
+					result.push(doc);
+				}
+				
 			});
 		};
 
