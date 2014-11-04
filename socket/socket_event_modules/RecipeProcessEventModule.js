@@ -1,6 +1,6 @@
 
-var RecipeProcessMongoHelper = require('RecipeProcessMongoHelper.js');
-var TimestampHelper = require('TimestampHelper.js');
+var RecipeProcessMongoHelper = require( __dirname + '/../../services/process/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
+var TimestampHelper = require( __dirname + '/../../services/util/TimestampHelper.js');
 
 var RecipeProcessEventModule = {
 	
@@ -12,53 +12,83 @@ var RecipeProcessEventModule = {
 		
 		enterRoom: function(data, resFunc) {
 
-			if (!data.rid) {
+			if ( !(data.rid && data.sender) ) {
 				resFunc(false);
 				return;
 			}	
 			
 			var that = this;
-			RecipeProcessMongoHelper.getRecipeProcesses(data.rid)
-			.done(function(result) {
-				that.socket.join(data.rid);
-				resFunc(result);
-			}, 
-			function(err) {
-				resFunc(false);
+			var rid = data.rid;
+			var userId = data.sender;
+			RoomManager.isMemberOf(rid, userId)
+			.done(function(isMemeber) {
+
+				if (isMember) {
+					that.socket.join(rid);
+					resFunc(true);
+				}
+
+			}, function(err) {
+				console.log(err);
+				resFunc(err);
 			});
 		},
 
 		leaveRoom: function(data, resFunc) {
-			
+			this.socket.leave();
 			this.socket.close();
+			resFunc(true);
 		},
 
 		sendProcess: function(data, resFunc) {
 
-			if (!(data.rid && data.process && data.sender)) {
+			if ( !(data.rid && data.process && data.sender) ) {
 				resFunc(false);
 				return;
 			}
 
-			var now = TimestampHelper.getTimestamp();
-			RecipeProcessMongoHelper.insertRecipeProcess(data.rid, data.process, data.sender, data.processSequence, now)
+			var rid = data.rid;
+			var process = data.process;
+			var userId = data.sender;
+			var index = !data.index ? null : data.index;
+
+			RoomManager.isMemberOf(rid, userId)
+			.done(function(isMember) {
+
+				if (isMember) {
+
+					var now = TimestampHelper.getTimestamp();
+					RecipeProcessMongoHelper.insertRecipeProcess(rid, process, userId, index, now)
 			
-			.done(function(isSucceed) {
+					.done(function(isSucceed) {
 				
-				if (isSucceed) {
-					var resObject = {'process': data.process, 'sender': data.sender, 'timestamp': now};
-					if (data.processSequence) {
-						resObject.processSequence = data.processSequence;
-					}
-					this.io.to(data.rid).emit('broadcastSendProcess', resObject, function(data) {});
-					resFunc(true);
+						if (isSucceed) {
+						
+							var resObject = {'process': process, 'sender': userId, 'timestamp': now};
+							if (data.index) {
+								resObject.index = data.index;
+							}
+							this.io.to(data.rid).emit('broadcastSendProcess', resObject, function(data) {});
+							resFunc(true);
+						
+						} else {
+							resFunc(false);
+						}
+					},
+
+					function(err) {
+						console.log(err)
+						resFunc(err);
+					});
+
 				} else {
 					resFunc(false);
 				}
-			},
 
-			function(err) {
-				resFunc(false);
+
+			}, function(err) {
+				console.log(err);
+				resFunc(err);
 			});
 		}
 	}

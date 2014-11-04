@@ -49,7 +49,7 @@ var ServerHelper = (function() {
 
 		//レスポンスボディを記述
 		var encode = 'UTF-8';
-		response.write(result + '\n', encode);
+		response.write(JSON.stringify(result) + '\n', encode);
 						
 		//レスポンスの終了
 		response.end();

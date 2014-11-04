@@ -14,7 +14,10 @@ var RecipeProcessMongoHelper = (function() {
 				return;
 			}
 
-			var query = {'rid': rid, 'process': process, 'sender': sender, 'index': index, 'timestamp': now};
+			var query = {'rid': rid, 'process': process, 'sender': sender, 'timestamp': now};
+			if (index) {
+				query.index = index;
+			}
 			db.collection('Process').insert(query, function(err, doc) {
 
 				db.close();
