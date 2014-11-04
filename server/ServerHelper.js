@@ -71,6 +71,8 @@ var ServerHelper = (function() {
 			var path = parsedObject.pathname;
 			var queries = parsedObject.query;
 
+			console.log('request path: ' + path);
+
 			if (_routeFuncMap[path]) {
 				_routeFuncMap[path](queries)
 

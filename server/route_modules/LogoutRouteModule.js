@@ -9,16 +9,19 @@ var LogoutRouteModule = {
 		
 		var def = deferred();
 
-		if (queries.id) {
-
-			LoginMongoHelper.removeLoginUserId(id)
-			.done(function(result) {
-				def.resolve(result);
-			}, function(err) {
-				def.resolve(false);
-			});
-
+		if (!queries['userID']) {
+			def.resolve(false);
+			return def.promise;
 		}
+
+		var userId = queries['userID'];
+
+		LoginMongoHelper.removeLoginUserId(userId)
+		.done(function(result) {
+			def.resolve(result);
+		}, function(err) {
+			def.resolve(false);
+		});
 
 		return def.promise;
 	}

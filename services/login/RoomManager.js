@@ -172,6 +172,7 @@ var RoomManager = (function() {
 					if (!room) {
 						db.close();
 						deferred.resolve(false);
+						console.log('room ' + rid + ' not found');
 						return;
 					}
 					
@@ -180,6 +181,7 @@ var RoomManager = (function() {
 					if (members.indexOf(userID) !== -1) {
 						db.close();
 						deferred.resolve(true);
+						console.log('already room member');
 						return;	
 					}
 
@@ -189,6 +191,7 @@ var RoomManager = (function() {
 					if (limit < members.length) {
 						db.close();
 						deferred.resolve(false);
+						console.log('limit over');
 						return;
 					}
 

@@ -79,6 +79,7 @@ var LoginMongoHelper = (function() {
 					return;
 				}
 
+				console.log('user: ' + userID + ' is not logged-in');
 				deferred.resolve(false);
 
 			});

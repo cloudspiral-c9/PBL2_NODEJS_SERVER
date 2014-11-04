@@ -1,6 +1,6 @@
 
 var deferred = require('deferred');
-var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var IngredientMongoHelper = require( __dirname + '/../../services/ingredient/IngredientMongoHelper.js').IngredientMongoHelper;
 
 var GetIngredientRouteModule = {
@@ -15,13 +15,13 @@ var GetIngredientRouteModule = {
 			return def.promise;
 		}
 
-		var rid = queries['rid'];
+		var rid = +queries['rid'];
 		var userId = queries['userID'];
 
-		RoomManager.isMemberOf(rid, userId)
-		.done(function(isMember) {
+		LoginMongoHelper.isLoggedIn(userId)
+		.done(function(isLoggedIn) {
 
-			if (isMember) {
+			if (isLoggedIn) {
 
 				IngredientMongoHelper.getIngredients(rid)
 				.done(function(result) {
@@ -34,12 +34,14 @@ var GetIngredientRouteModule = {
 			} else {
 				def.resolve(false);
 			}
+			
 
 		}, function(err) {
 			console.log(err);
 			def.resolve(false);
 		});
 
+		
 		return def.promise;
 	}	
 };

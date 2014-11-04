@@ -1,11 +1,11 @@
 
 var ChatLogMongoHelper = require( __dirname + '/../../services/chat/ChatLogMongoHelper.js').ChatLogMongoHelper;
-var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
 var GetChatLogRouteModule = {
 
-	route: '/getChatLog',
+	route: '/getchatlog',
 	routeFunc: function(queries) {
 
 		var def = deferred();
@@ -15,15 +15,15 @@ var GetChatLogRouteModule = {
 			return def.promise;
 		}
 
-		var rid = queries['rid'];
-		var pos = !queries['pos'] ? null: pos;
-		var limit = !queries['limit'] ? null : limit;
+		var rid = +queries['rid'];
+		var pos = !queries['pos'] ? null: +queries['pos'];
+		var limit = !queries['limit'] ? null : +queries['limit'];
 		var userId = queries['userID'];
 
-		RoomManager.isMemberOf(rid, userId)
-		.done(function(isMember) {
+		LoginMongoHelper.isLoggedIn(userId)
+		.done(function(isLoggedIn) {
 
-			if (isMember) {
+			if (isLoggedIn) {
 
 				ChatLogMongoHelper.getChatLog(rid, pos, limit)
 				.done(function(result) {
@@ -32,7 +32,7 @@ var GetChatLogRouteModule = {
 					console.log(err);
 					def.resolve(false);
 				});
-				
+
 			} else {
 				def.resolve(false);
 			}
@@ -40,8 +40,9 @@ var GetChatLogRouteModule = {
 		}, function(err) {
 			console.log(err);
 			def.resolve(false);
-		});		
+		});
 
+			
 		return def.promise;
 	}
 };

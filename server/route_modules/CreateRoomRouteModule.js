@@ -12,12 +12,11 @@ var CreateRoomRouteModule = {
 		var def = deferred();
 
 		//クエリが不完全な場合は失敗フラグで終了
-		if (!(queries['rid'] && queries['description'] && queries['title'] && queries['userID'] && queries['type'] ) ){
+		if (!(queries['description'] && queries['title'] && queries['userID'] && queries['type'] ) ){
 			def.resolve(false);
 			return def.promise;
 		}
 
-		var rid = queries['rid'];
 		var description = queries['description'];
 		var title = queries['title'];
 		var userId = queries['userID'];
@@ -29,7 +28,7 @@ var CreateRoomRouteModule = {
 
 			if (isLoggedIn) {
 
-				RoomManager.createNewRoom(rid, description, title, limit, userId, type)
+				RoomManager.createNewRoom(description, title, limit, userId, type)
 
 				.done(function(result) {
 					def.resolve(result);

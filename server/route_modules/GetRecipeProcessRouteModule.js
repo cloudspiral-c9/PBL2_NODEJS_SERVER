@@ -1,6 +1,6 @@
 
 var RecipeProcessMongoHelper = require( __dirname + '/../../services/process/RecipeProcessMongoHelper.js').RecipeProcessMongoHelper;
-var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
 
@@ -16,15 +16,15 @@ var GetRecipeProcessRouteModule = {
 			return def;
 		}
 
-		var rid = queries['rid'];
+		var rid = +queries['rid'];
 		var userId = queries['userID'];
 
-		RoomManager.isMemberOf(rid, userId)
-		.done(function(isMember) {
+		LoginMongoHelper.isLoggedIn(userId)
+		.done(function(isLoggedIn) {
 
-			if (isMember) {
+			if (isLoggedIn) {
 
-				RecipeProcessMongoHelper.getRecipeProcess(rid)
+				RecipeProcessMongoHelper.getRecipeProcesses(rid)
 				.done(function(result) {
 					def.resolve(result);
 				}, function(err) {

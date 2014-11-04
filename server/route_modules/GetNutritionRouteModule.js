@@ -1,6 +1,6 @@
 
-var NutritionHelper = require( __dirname + '/../../services/chart/NutritionHelper.js').NuritionHelper;
-var RoomManager = require( __dirname + '/../../services/login/RoomManager.js').RoomManager;
+var NutritionHelper = require( __dirname + '/../../services/chart/NutritionHelper.js').NutritionHelper;
+var LoginMongoHelper = require( __dirname + '/../../services/login/LoginMongoHelper.js').LoginMongoHelper;
 var deferred = require('deferred');
 
 var GetNutritionRouteModule = {
@@ -15,12 +15,13 @@ var GetNutritionRouteModule = {
 			return def.promise;
 		}
 
-		var rid = queries['rid'];
+		var rid = +queries['rid'];
 		var userId = queries['userID'];
-		RoomManager.isMemberOf(rid, userId)
-		.done(function(isMember) {
+		
+		LoginMongoHelper.isLoggedIn(userId)
+		.done(function(isLoggedIn) {
 
-			if (isMember) {
+			if (isLoggedIn) {
 				NutritionHelper.getNutritionDatas(rid)
 				.done(function(nutritionDatas) {
 
