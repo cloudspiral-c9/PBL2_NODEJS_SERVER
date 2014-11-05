@@ -3,31 +3,24 @@ var MongoUtil = require( __dirname + '/../util/MongoUtil.js');
 var deferred = require('deferred');
 
 var LoginMongoHelper = (function() {
-
+	
 	var insertLoginUserId = function(userID) {
 
 		var executeFunc = function(db, deferred) {
-
+			
 			if (!userID) {
 				db.close();
 				return;
 			}
 
-
-			var query = {  'query' : {'userID': userID},
-					'update': { '$setOnInsert': {'userID': userID} },
-					'new': true,
-					'upsert': true
-				       };
-
-			db.collection('login').findAndModify( query , function(err, result) {
+			var query = {'userID': userID};
+			db.collection('login').insert(query, function(err, result) {
 
 				db.close();
 
 				if (err) {
 					console.log(err);
 					deferred.resolve(false);
-					return;
 				}
 
 				deferred.resolve(true);
