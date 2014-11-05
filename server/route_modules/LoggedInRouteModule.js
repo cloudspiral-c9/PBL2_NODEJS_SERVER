@@ -1,26 +1,39 @@
 
-
-var deferred = require('deferred');
 var passport = require( __dirname + '/../../services/login/passport.js').passport;
 
 var LoggedInRouteModule = {
 
-	route: '/auth/google/return',
+	route: '/auth/google/callback',
 	request: null,
 	response: null,
+	next: null,
 	routeFunc: function(queries) {
 
-		var def = deferred();
-
+		//TODO failureRidirect
 		var redirects = {
+			successRedirect: 'http://ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com/recipeers/public/',
 			failureRedirect: '/'
 		};
 
-		console.log()
-		passport.authenticate('google', redirects)(this.request, this.response);
+		var that = this;
+		passport.authenticate('google', redirects, function(err, userIdObj) {
 
-		def.resolve(true);
-		return def.promise;
+			if (err) {
+				console.log(err);
+				def.resolve(false);
+				return;
+			}
+
+			var location =  'http://ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com/recipeers/public/?userID=' + JSON.stringify(userIdObj) + '\n;'
+			var headers = {
+				'Content-Type': 'application/json charset=UTF-8\n',
+				'Location': location
+			};
+			that.response.writeHead(302, headers);
+			that.response.end();
+
+		})(this.request, this.response, this.next);
+
 	}
 };
 

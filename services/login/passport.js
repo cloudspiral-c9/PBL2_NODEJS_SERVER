@@ -1,7 +1,7 @@
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var LoginMongoHelper = require( __dirname + '/LoginMongoHelper.js' );
+var LoginMongoHelper = require( __dirname + '/LoginMongoHelper.js' ).LoginMongoHelper;
 
 var GOOGLE_CLIENT_ID = '912049202501-j8bjuf1jsnq8uefo5qecbhigj5erppm5.apps.googleusercontent.com';
 var GOOGLE_CLIENT_SECRET = 'mUlINrSun4TKrqpbhW3arpoF';
@@ -25,12 +25,9 @@ var strategy = new GoogleStrategy(
 
 function(accessToken, refreshToken, profile, done) {
 
-	console.log(accessToken);
-	console.log(refreshToken);
 	console.log(profile);
-	console.log(profile.id);
 
-	LoginMongoHelper.insertLoginUserId(identifier)
+	LoginMongoHelper.insertLoginUserId(profile.id)
 	.done(function(result) {
 
 		if (result) {

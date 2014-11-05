@@ -3,6 +3,10 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var app = require('express')();
+var passport = require( __dirname + '/../services/login/passport.js' ).passport;
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 var ServerHelper = (function() {
 
@@ -20,7 +24,7 @@ var ServerHelper = (function() {
 
 		//レスポンスボディを記述
 		var encode = 'UTF-8';
-		response.write(JSON.stringify(result) + '\n', encode);
+		response.write(JSON.stringify(result) , encode);
 
 		//レスポンスの終了
 		response.end();
@@ -30,7 +34,7 @@ var ServerHelper = (function() {
 	var _addRouteModule = function(module) {
 
 		var route = module.route;
-		app.get(route, function(request, response) {
+		app.get(route, function(request, response, next) {
 
 			var parsedObject = url.parse(request.url, true);
 			var path = parsedObject.pathname;
@@ -38,6 +42,7 @@ var ServerHelper = (function() {
 
 			module.request = request;
 			module.response = response;
+			module.next = next;
 
 			console.log('request path: ' + path);
 			var promise = module.routeFunc(queries);
