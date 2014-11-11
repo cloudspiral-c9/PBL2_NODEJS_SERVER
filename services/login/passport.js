@@ -8,14 +8,10 @@ var LoginMongoHelper = require( __dirname + '/LoginMongoHelper.js' ).LoginMongoH
 
 
 passport.serializeUser(function(user, done) {
-	console.log('serialize user');
-	console.log(user);
     	done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-    	console.log('deserualizeUser');
-    	console.log(obj);
     	done(null, obj);
 });
 
@@ -32,7 +28,6 @@ var gStrategy = new GoogleStrategy( {
 	.done(function(result) {
 
 		if (result) {
-			console.log('before done');
 			done(null, {'userID': profile.id, 'userName': profile.displayName});
 		} else {
 			done(null, false);

@@ -11,6 +11,7 @@ var methodoverride = require('method-override');
 var MongoStore = require('connect-mongo')(session);
 var app = express();
 var passport = require( __dirname + '/../services/login/passport.js' ).passport; 
+var cookieParser = require('cookie-parser');
 
 var viewRouter = require(__dirname + '/view_route_modules/index.js')
 
@@ -34,15 +35,18 @@ app.use(session( {
 	store: sessionStore,
 	cookie: {
 		httpOnly: false,
-		maxAge: new Date(Date.now() + 60 * 60 * 1000)
+		maxAge: new Date(Date.now() + 30 * 60 * 1000)
 	}
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.use(viewRouter);
+app.use(express.static('public'));
 app.set('views', '/home/ec2-user/recipeers/public/');
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
+app.engine('.html', require('ejs').renderFile);
 
 
 
@@ -73,9 +77,6 @@ var ServerHelper = (function() {
 
 		var route = module.route;
 		app.get(route, function(request, response, next) {
-
-			console.log(request.session);
-			console.log(request.user);
 
 			var parsedObject = url.parse(request.url, true);
 			var path = parsedObject.pathname;

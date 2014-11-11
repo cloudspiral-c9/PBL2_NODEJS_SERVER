@@ -27,7 +27,8 @@ var LoggedInTwitterRouteModule = {
 				}	
 			});
 			
-			that.response.redirect('http://ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com:8080/views/login/roomselect');
+			that.response.cookie('user', JSON.stringify(userObj), {domain: 'ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com', path: '/', expires: new Date(Date.now() + 30 * 60 * 1000) });
+			that.response.redirect('http://ec2-54-64-199-130.ap-northeast-1.compute.amazonaws.com:8080/roomselect/login');
 
 		})(this.request, this.response, this.next);
 
